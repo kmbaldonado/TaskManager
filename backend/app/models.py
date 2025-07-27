@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
+from datetime import date
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -14,5 +15,6 @@ class Task(SQLModel, table=True):
     description: str
     completed: bool = False
     owner_id: int = Field(foreign_key="user.id")
+    deadline: Optional[date] = None
 
     owner: Optional[User] = Relationship(back_populates="tasks")

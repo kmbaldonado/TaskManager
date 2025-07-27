@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+.bg-dotted {
+    background-image: radial-gradient(#ccc 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-color: #f8f9fa; /* Light background for contrast */
+}
