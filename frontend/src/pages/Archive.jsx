@@ -10,7 +10,14 @@ export default function Archive() {
 
   const fetchArchivedTasks = async () => {
     const res = await API.get("/tasks/");
-    setArchivedTasks(res.data.filter((t) => t.completed));
+    const sorted = res.data
+      .filter((t) => t.completed)
+      .sort((a, b) => {
+        if (!a.deadline) return -1;
+        if (!b.deadline) return 1;
+        return new Date(a.deadline) - new Date(b.deadline);
+      });
+    setArchivedTasks(sorted);
   };
 
   const restoreTask = async (id) => {
@@ -28,36 +35,63 @@ export default function Archive() {
   }, []);
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">✅ Archived Tasks</h1>
-        <div className="space-x-4">
-          <Link to="/tasks" className="text-blue-500 underline">Back to Tasks</Link>
-          <button onClick={handleLogout} className="text-red-500 font-medium">Logout</button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-violet-200 flex items-center justify-center px-4 py-10">
+      <div className="relative w-full max-w-xl bg-dotted p-8 rounded-lg shadow-lg">
+        {/* Stickers */}
+        <img
+          src="/star.png"
+          alt="Sticker"
+          className="absolute -top-3 -left-13 w-[25%] pointer-events-none"
+        />
+        <img
+          src="/stars.png"
+          alt="Sticker"
+          className="absolute -bottom-10 -right-15 w-[30%] pointer-events-none"
+        />
 
-      <ul className="space-y-4">
-        {archivedTasks.map((task) => (
-          <li key={task.id} className="p-4 border rounded bg-green-100">
-            <div className="flex justify-between items-center">
-              <div>
+        <h2 className="text-3xl font-bold text-left mb-4 text-slate-800">
+          Archived Tasks
+        </h2>
+
+        <ul className="space-y-3">
+          {archivedTasks.map((task) => (
+            <li
+              key={task.id}
+              className="flex items-start justify-between bg-gray-200 p-3 rounded border border-gray-300"
+            >
+              <div className="flex-1 space-y-1">
                 <p className="font-bold">{task.title}</p>
                 <p className="text-sm">{task.description}</p>
                 {task.deadline && (
-                  <p className="text-xs text-gray-500">Due: {task.deadline}</p>
+                  <p className="text-xs text-gray-600">Due: {task.deadline}</p>
                 )}
               </div>
               <button
                 onClick={() => restoreTask(task.id)}
-                className="text-yellow-600 underline text-sm"
+                className="ml-4 text-yellow-600 font-semibold hover:underline text-sm"
               >
                 Restore
               </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="w-full max-w-[10%] content-start">
+        <button
+          onClick={() => navigate("/tasks")}
+          className="bg-blue-300 rounded-r-lg text-white text-xl font-semibold w-[80%]"
+        >
+          TASKS
+        </button>
+        <div className="mt-3"></div>
+        <button
+          onClick={handleLogout}
+          className="bg-blue-300 rounded-r-lg text-white text-xl font-semibold w-[80%]"
+        >
+          LOGOUT
+        </button>
+      </div>
     </div>
   );
 }

@@ -18,7 +18,14 @@ export default function Tasks() {
   const fetchTasks = async () => {
     try {
       const res = await API.get("/tasks/");
-      setTasks(res.data.filter((t) => !t.completed));
+      const sortedTasks = res.data
+        .filter((t) => !t.completed)
+        .sort((a, b) => {
+          if (!a.deadline) return -1;
+          if (!b.deadline) return 1;
+          return new Date(a.deadline) - new Date(b.deadline);
+        });
+      setTasks(sortedTasks);
     } catch (err) {
       alert("Failed to fetch tasks.");
     }
